@@ -4,7 +4,7 @@ package token
 type TokenType string
 
 // A struct that has
-type token struct {
+type Token struct {
 	Type    TokenType
 	Literal string
 }
