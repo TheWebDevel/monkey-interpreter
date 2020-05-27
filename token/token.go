@@ -1,9 +1,9 @@
 package token
 
-// A custom type of type string
+// TokenType is  custom type of type string
 type TokenType string
 
-// A struct that has
+// Token is a struct that has Type and Literal
 type Token struct {
 	Type    TokenType
 	Literal string
