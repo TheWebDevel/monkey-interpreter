@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/thewebdevel/monkey-interpreter/ast"
 	"github.com/thewebdevel/monkey-interpreter/lexer"
 	"github.com/thewebdevel/monkey-interpreter/token"
@@ -14,6 +16,8 @@ import (
 // they point to the next TOKEN.
 type Parser struct {
 	l *lexer.Lexer
+	// An error field which is a slice of strings
+	errors []string
 
 	// We need to look at the curToken, which is the current token under examination
 	// to decide what to do next, we also need peekToken for the decision if
@@ -25,9 +29,12 @@ type Parser struct {
 	peekToken token.Token
 }
 
-// New function returns an intial Parser that has a lexer, curToken and the peekToken
+// New function returns an intial Parser that has a lexer, errors, curToken and the peekToken
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{
+		l:      l,
+		errors: []string{},
+	}
 
 	// Read two token so curToken and peekToken are both set
 	p.nextToken()
@@ -125,5 +132,18 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		return true
 	}
 
+	p.peekError(t)
 	return false
+}
+
+// Errors will check if the parser has encountered any errors
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+// peekError is used to add an error to errors when the type of peekToken
+// does not match the expectation.
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected token to be %s, got %s instead", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
