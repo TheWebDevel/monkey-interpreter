@@ -82,3 +82,16 @@ func (i *Identifier) expressionNode() {}
 
 // TokenLiteral satisfiy the Node Interface
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+
+// ReturnStatement of type struct that has a token (return) and a ReturnValue
+// which is an expression
+type ReturnStatement struct {
+	Token       token.Token // the 'return' token
+	ReturnValue Expression
+}
+
+// statementNode satisfy the Statement Interface
+func (rs *ReturnStatement) statementNode() {}
+
+// TokenLiteral satisfiy the Node Interface
+func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }

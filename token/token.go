@@ -35,12 +35,14 @@ const (
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	RETURN   = "RETURN"
 )
 
 // Define keywords
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"return": RETURN,
 }
 
 // LookupIndent Checks the keyword table to see if the given identifier is a keyword

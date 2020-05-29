@@ -78,6 +78,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -104,6 +106,23 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 	// Then it jumps over the expression following the equal sign until it
 	// encounters a semi-colon
+	// TODO: we're skipping the expression until we encounter a semicolon
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+// parseReturnStatement constructs an ast,ReturnStatement, with the current
+// token it's sitting on as Token. It then brings the parsr in place for the
+// expression that comes next by calling nextToken()
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+
+	p.nextToken()
+
+	// Then it jumps over the expression until it encounters a semi-colon
 	// TODO: we're skipping the expression until we encounter a semicolon
 	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
