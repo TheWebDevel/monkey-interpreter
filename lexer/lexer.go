@@ -73,7 +73,8 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
-	default: // A default case to check for identifier whenever l.ch is not recognized
+	default:
+		// A default case to check for identifier whenever l.ch is not recognized
 		// Recognize if the current char is a letter. If so, it needs to read the
 		// rest of the identifier/keyword until it encounters a one letter character
 		// After reading the identifier/keyword we need to find out if its an
