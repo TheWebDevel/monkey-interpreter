@@ -77,6 +77,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	// if we encounter a token of type token.INT
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	// if we encounter a token of type token.MINUS
+	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+	// if we encounter a token of type token.BANG
+	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 
 	// Read two token so curToken and peekToken are both set
 	p.nextToken()
@@ -190,12 +194,11 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 // with p.curToken.Type in the prefix position
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.curToken.Type]
-
 	if prefix == nil {
+		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
 
-	// Call the parsing function
 	leftExp := prefix()
 
 	return leftExp
@@ -224,6 +227,28 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	lit.Value = value
 
 	return lit
+}
+
+// parsePrefixExpression builds an AST node, in this case *ast.PrefixExpression
+// It also advances our token by calling p.nextToken()
+// When this function is called, p.curToken is either of type token.BANG(!)
+// or token.MINUS
+// In order to correctly parse -5 more than one token must be aparsed
+// That's the reason for p.nextToken()
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.curToken,
+		Operator: p.curToken.Literal}
+	p.nextToken()
+	expression.Right = p.parseExpression(PREFIX)
+	return expression
+}
+
+// noPrefixParseFnError adds a formatted error message to our Parser's
+// errors field.
+func (p *Parser) noPrefixParseFnError(t token.TokenType) {
+	msg := fmt.Sprintf("no prefix parse function for %s found", t)
+	p.errors = append(p.errors, msg)
 }
 
 // Check if the curToken type is equal to the type in parameter

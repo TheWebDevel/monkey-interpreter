@@ -22,6 +22,8 @@ const (
 	// Operators
 	ASSIGN = "="
 	PLUS   = "+"
+	MINUS  = "-"
+	BANG   = "!"
 
 	// Delimiters
 	COMMA     = ","
@@ -36,6 +38,9 @@ const (
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 	RETURN   = "RETURN"
+
+	EQ     = "=="
+	NOT_EQ = "!="
 )
 
 // Define keywords

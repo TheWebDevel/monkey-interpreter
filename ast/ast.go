@@ -133,6 +133,31 @@ func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 
 func (il *IntegerLiteral) String() string { return il.Token.Literal }
 
+// PrefixExpression has two noteworthy fields, Operator and Right
+// Operator is a string that's going to contain either "-" or "!"
+// The Right field contains the expression to the right of the operator
+type PrefixExpression struct {
+	Token    token.Token // The prefix token. Ex: !
+	Operator string
+	Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+
+// TokenLiteral satisfiy the Node Interface
+func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
+
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
 // String method creates a buffer and writes the return value of each
 // statement's String() method to it. It then returns a buffer of a string.
 func (p *Program) String() string {
