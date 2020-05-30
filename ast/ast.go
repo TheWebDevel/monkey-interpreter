@@ -1,6 +1,10 @@
 package ast
 
-import "github.com/thewebdevel/monkey-interpreter/token"
+import (
+	"bytes"
+
+	"github.com/thewebdevel/monkey-interpreter/token"
+)
 
 // Node is an interface
 // Every node in our AST has to implement the Node interface
@@ -9,6 +13,8 @@ import "github.com/thewebdevel/monkey-interpreter/token"
 type Node interface {
 	// TokenLiteral() will be used only for debugging and testing
 	TokenLiteral() string
+	// allows us to print AST nodes for debugging and to compare other AST Nodes
+	String() string
 }
 
 // The AST we are going to construct consists solely of Nodes
@@ -95,3 +101,73 @@ func (rs *ReturnStatement) statementNode() {}
 
 // TokenLiteral satisfiy the Node Interface
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
+
+// ExpressionStatement has two fields, the token field, which every node has
+// and the Expression field which holds the expression.
+// ast.ExpressionStatement fulfills the ast.Statement Interface, which means
+// we can add that to the Statements slice of ast.Program
+type ExpressionStatement struct {
+	Token      token.Token // the first token of the expression
+	Expression Expression
+}
+
+// statementNode satisfy the Statement Interface
+func (es *ExpressionStatement) statementNode() {}
+
+// TokenLiteral satisfiy the Node Interface
+func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+
+// String method creates a buffer and writes the return value of each
+// statement's String() method to it. It then returns a buffer of a string.
+func (p *Program) String() string {
+	var out bytes.Buffer
+
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
+}
+
+// With these String() in place, we can now just call String() on *ast.Program
+// and get our whole program back as string. This makes the *ast.Program
+// easy to test and debug
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String() + " ")
+	out.WriteString("=")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
+
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
+
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+
+	return ""
+}
+
+func (i *Identifier) String() string { return i.Value }
