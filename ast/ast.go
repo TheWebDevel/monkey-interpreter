@@ -117,6 +117,22 @@ func (es *ExpressionStatement) statementNode() {}
 // TokenLiteral satisfiy the Node Interface
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 
+// IntegerLiteral fulfills the ast.Expression interface.
+// Here, value is an int64 type and not a string
+// When we build an *ast.IntegerLiteral we have to convert the string in
+// /*ast.IntegerLiteral.Token.Literal to an int64 ("5" to 5)
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode() {}
+
+// TokenLiteral satisfiy the Node Interface
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+
+func (il *IntegerLiteral) String() string { return il.Token.Literal }
+
 // String method creates a buffer and writes the return value of each
 // statement's String() method to it. It then returns a buffer of a string.
 func (p *Program) String() string {

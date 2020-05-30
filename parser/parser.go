@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/thewebdevel/monkey-interpreter/ast"
 	"github.com/thewebdevel/monkey-interpreter/lexer"
@@ -71,10 +72,11 @@ func New(l *lexer.Lexer) *Parser {
 	}
 
 	// Intialize the prefixParseFns map on Parser and register a parsing function
-	// if we encounter a token of type token.IDENT the parsing function to call
-	// is parseIdentifier, a method we defined on *Parser
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	// if we encounter a token of type token.IDENT
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	// if we encounter a token of type token.INT
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 
 	// Read two token so curToken and peekToken are both set
 	p.nextToken()
@@ -204,6 +206,24 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 // It doesn't advances the token.
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
+// parseIntegerLiteral parses the integer literal nd returns an ast.Expression
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.curToken}
+
+	// It converts the string in p.curToken.Literal into an int64
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	// We then save the int64 to the Value field
+	lit.Value = value
+
+	return lit
 }
 
 // Check if the curToken type is equal to the type in parameter
