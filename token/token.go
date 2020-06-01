@@ -20,10 +20,12 @@ const (
 	INT   = "INT"    // 12345
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
-	MINUS  = "-"
-	BANG   = "!"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	SLASH    = "/"
+	ASTERISK = "*"
 
 	// Delimiters
 	COMMA     = ","
@@ -41,6 +43,8 @@ const (
 
 	EQ     = "=="
 	NOT_EQ = "!="
+	LT     = "<"
+	GT     = ">"
 )
 
 // Define keywords

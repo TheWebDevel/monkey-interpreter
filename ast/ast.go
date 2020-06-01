@@ -158,6 +158,33 @@ func (pe *PrefixExpression) String() string {
 	return out.String()
 }
 
+// InfixExpression fulfills the ast.Expression and ast.Node interfaces,
+// by defining the expressionNode() and String() methods.
+// It also have a new field called Left which holds any expression
+type InfixExpression struct {
+	Token    token.Token // The operator token, eg: +
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (ie *InfixExpression) expressionNode() {}
+
+// TokenLiteral satisfiy the Node Interface
+func (ie *InfixExpression) TokenLiteral() string { return ie.Token.Literal }
+
+func (ie *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(ie.Left.String())
+	out.WriteString(" " + ie.Operator + " ")
+	out.WriteString(ie.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
 // String method creates a buffer and writes the return value of each
 // statement's String() method to it. It then returns a buffer of a string.
 func (p *Program) String() string {
